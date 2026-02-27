@@ -7,14 +7,13 @@ BurstRule::BurstRule(size_t threshold, double seconds, int weight)
 {
 }
 
-int BurstRule::evaluate(const Logger& logger)
+int BurstRule::evaluate(const Logger& logger, const DetectionContext& /*ctx*/)
 {
     if (logger.getFilesEncrypted() >= fileThreshold &&
         logger.getElapsedSeconds() <= timeWindow)
     {
         return riskWeight;
     }
-
     return 0;
 }
 

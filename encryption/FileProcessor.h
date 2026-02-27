@@ -1,16 +1,18 @@
 #pragma once
 #include <filesystem>
-#include "Encryptor.h"
+
 #include "Logger.h"
-#include "Detector.h"
+#include "DetectionEngine.h"
+#include "BurstRule.h"
+#include "EntropyRule.h"
+#include "DetectionContext.h"
 
 class FileProcessor {
 private:
-    Encryptor encryptor;
     Logger logger;
-    Detector detector;
+    DetectionEngine detectionEngine;
 
 public:
-    FileProcessor(unsigned char key);
+    FileProcessor(unsigned char key); // keep signature
     void simulateAttack(const std::filesystem::path& folderPath);
 };

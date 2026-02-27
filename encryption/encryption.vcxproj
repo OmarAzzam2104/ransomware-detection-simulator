@@ -136,6 +136,8 @@
     <ClCompile Include="Detector.cpp" />
     <ClCompile Include="Encryptor.cpp" />
     <ClCompile Include="Encryptor.h" />
+    <ClCompile Include="EntropyAnalyzer.cpp" />
+    <ClCompile Include="EntropyRule.cpp" />
     <ClCompile Include="FileProcessor.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Logger.h" />
@@ -144,8 +146,11 @@
   <ItemGroup>
     <ClInclude Include="BehaviorRule.h" />
     <ClInclude Include="BurstRule.h" />
+    <ClInclude Include="DetectionContext.h" />
     <ClInclude Include="DetectionEngine.h" />
     <ClInclude Include="Detector.h" />
+    <ClInclude Include="EntropyAnalyzer.h" />
+    <ClInclude Include="EntropyRule.h" />
     <ClInclude Include="FileProcessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
