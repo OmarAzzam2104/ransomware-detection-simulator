@@ -1,14 +1,11 @@
 #pragma once
 #include "BehaviorRule.h"
-#include <deque>
-#include <chrono>
 
 class BurstRule : public BehaviorRule {
 private:
     size_t fileThreshold;
     double timeWindow;
     int riskWeight;
-    mutable std::deque<std::chrono::steady_clock::time_point> recentFiles;
 
 public:
     BurstRule(size_t threshold, double seconds, int weight);

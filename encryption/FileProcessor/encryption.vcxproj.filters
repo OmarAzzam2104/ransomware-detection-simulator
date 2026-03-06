@@ -33,6 +33,9 @@
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Detector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="BurstRule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Detector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BehaviorRule.h">

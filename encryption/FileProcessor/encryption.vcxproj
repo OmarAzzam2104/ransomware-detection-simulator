@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="BurstRule.cpp" />
     <ClCompile Include="DetectionEngine.cpp" />
+    <ClCompile Include="Detector.cpp" />
     <ClCompile Include="Encryptor.cpp" />
     <ClCompile Include="Encryptor.h" />
     <ClCompile Include="EntropyAnalyzer.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="BurstRule.h" />
     <ClInclude Include="DetectionContext.h" />
     <ClInclude Include="DetectionEngine.h" />
+    <ClInclude Include="Detector.h" />
     <ClInclude Include="EntropyAnalyzer.h" />
     <ClInclude Include="EntropyRule.h" />
     <ClInclude Include="FileProcessor.h" />

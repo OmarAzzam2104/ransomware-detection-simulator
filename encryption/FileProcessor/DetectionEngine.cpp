@@ -1,5 +1,5 @@
 #include "DetectionEngine.h"
-#include <iostream>
+
 DetectionEngine::DetectionEngine(int threshold)
     : riskThreshold(threshold)
 {
@@ -10,21 +10,14 @@ void DetectionEngine::addRule(std::unique_ptr<BehaviorRule> rule)
     rules.push_back(std::move(rule));
 }
 
-int DetectionEngine::evaluate(const Logger& logger, const DetectionContext& ctx, bool verbose)
+int DetectionEngine::evaluate(const Logger& logger, const DetectionContext& ctx)
 {
     int totalRisk = 0;
     for (const auto& rule : rules)
-    {
-        int ruleRisk = rule->evaluate(logger, ctx);
-        if (ruleRisk > 0 && verbose)
-        {
-            std::cout << "  [RULE TRIGGERED] " << rule->getName()
-                << " (+" << ruleRisk << ")\n";
-        }
-        totalRisk += ruleRisk;
-    }
+        totalRisk += rule->evaluate(logger, ctx);
     return totalRisk;
 }
+
 bool DetectionEngine::isMalicious(int totalRisk) const
 {
     return totalRisk >= riskThreshold;

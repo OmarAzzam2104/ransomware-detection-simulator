@@ -13,6 +13,6 @@ private:
     DetectionEngine detectionEngine;
 
 public:
-    FileProcessor();
+    FileProcessor(unsigned char key); // keep signature
     void simulateAttack(const std::filesystem::path& folderPath);
 };

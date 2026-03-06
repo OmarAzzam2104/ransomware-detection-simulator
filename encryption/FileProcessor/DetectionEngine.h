@@ -13,7 +13,6 @@ public:
     DetectionEngine(int threshold);
     void addRule(std::unique_ptr<BehaviorRule> rule);
 
-    int evaluate(const Logger& logger, const DetectionContext& ctx, bool verbose = false);
-
+    int evaluate(const Logger& logger, const DetectionContext& ctx);
     bool isMalicious(int totalRisk) const;
 };

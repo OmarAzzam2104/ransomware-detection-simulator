@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 static const std::string MAGIC = "RSIMv1";
 
-FileProcessor::FileProcessor()
+FileProcessor::FileProcessor(unsigned char /*key*/)
     : detectionEngine(70) // risk threshold
 {
     detectionEngine.addRule(std::make_unique<BurstRule>(3, 2.0, 40));
@@ -38,7 +38,6 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
 
         fs::path input = entry.path();
         fs::path output = input.string() + ".enc";
-        if (input.extension() == ".enc") continue;
 
         std::ifstream in(input, std::ios::binary);
         if (!in)
@@ -126,7 +125,7 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
             << " | EntropyDelta(max): " << maxEntropyDelta << "\n";
 
         // ✅ Evaluate multilayer detection
-        int risk = detectionEngine.evaluate(logger, ctx, true);
+        int risk = detectionEngine.evaluate(logger, ctx);
 
         if (detectionEngine.isMalicious(risk))
         {
