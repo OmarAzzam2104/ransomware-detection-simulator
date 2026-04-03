@@ -137,6 +137,7 @@
     <ClCompile Include="Encryptor.h" />
     <ClCompile Include="EntropyAnalyzer.cpp" />
     <ClCompile Include="EntropyRule.cpp" />
+    <ClCompile Include="ExtensionChangeRule.cpp" />
     <ClCompile Include="FileProcessor.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Logger.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="DetectionEngine.h" />
     <ClInclude Include="EntropyAnalyzer.h" />
     <ClInclude Include="EntropyRule.h" />
+    <ClInclude Include="ExtensionChangeRule.h" />
     <ClInclude Include="FileProcessor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,7 @@
 #include "FileProcessor.h"
 #include "Encryptor.h"
 #include "EntropyAnalyzer.h"
+#include "ExtensionChangeRule.h"
 
 #include <fstream>
 #include <vector>
@@ -8,24 +9,26 @@
 
 namespace fs = std::filesystem;
 
-static const std::string MAGIC = "RSIMv1";
+static const std::string MAGIC = "RSIMv1"; // A 6-character marker written at the start of every .enc file. "RSIM" stands for Ransomware SIMulator, "v1" is version 1. This is how the decryptor will later recognize a valid encrypted file.
 
-FileProcessor::FileProcessor()
-    : detectionEngine(70) // risk threshold
+FileProcessor::FileProcessor() //Constructor
+    : detectionEngine(70) // risk threshold ,Passes 70 to detection engine constructor
 {
-    detectionEngine.addRule(std::make_unique<BurstRule>(3, 2.0, 40));
-    detectionEngine.addRule(std::make_unique<EntropyRule>(2.0, 35));
+    detectionEngine.addRule(std::make_unique<BurstRule>(3, 2.0, 40)); //creates a BurstRule with threshold=3 files, time window = 2.0seconds,weight=40
+    detectionEngine.addRule(std::make_unique<EntropyRule>(2.0, 35)); //Creates an EntropyRule with delta threshold=2.0,weight=35
+    detectionEngine.addRule(std::make_unique<ExtensionChangeRule>(3, 30));
 }
 
 void FileProcessor::simulateAttack(const fs::path& folderPath)
 {
-    logger.start();
+    logger.start(); //Resets the counter to 0 and captures the start time.Must be called before the loop begins.
+
 
     // ✅ Count all files first
     size_t totalFiles = 0;
-    for (auto& entry : fs::directory_iterator(folderPath))
+    for (auto& entry : fs::directory_iterator(folderPath)) // Opens the folder and lets you loop through every item inside it. Each entry is one item,could be a file or a subfolder.
     {
-        if (entry.is_regular_file())
+        if (entry.is_regular_file()) //Returns true only for actual files,not subfoldersmor special system files.
             totalFiles++;
     }
 
@@ -36,19 +39,20 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         if (!entry.is_regular_file())
             continue;
 
-        fs::path input = entry.path();
-        fs::path output = input.string() + ".enc";
-        if (input.extension() == ".enc") continue;
+        fs::path input = entry.path(); //gets the full path of the current file.
+        fs::path output = input.string() + ".enc"; //Builds the output path by appending".enc" to the original filename.
+        if (input.extension() == ".enc") continue; //Skips already encrypted files.
 
-        std::ifstream in(input, std::ios::binary);
+        std::ifstream in(input, std::ios::binary); //Opens the file for reading in binary mode.
+                                                   //std::ios::binary is critical, without it, on Windows, certain byte values get automatically converted which would corrupt the data. 
         if (!in)
-            continue;
+            continue; //If the file failed to open for any reason , skip it safely instead of crashing.
 
-        std::ofstream out(output, std::ios::binary);
+        std::ofstream out(output, std::ios::binary); //Opens the output .enc file for writing in binary mode.
         if (!out)
             continue;
 
-        Encryptor encryptor;
+        Encryptor encryptor; //Creates a fresh encryptor, gen new random key and IV.
         if (!encryptor.init())
         {
             std::cout << "Encryption init failed\n";
@@ -56,11 +60,11 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         }
 
         // Header
-        out.write(MAGIC.c_str(), MAGIC.size());
-        out.write(reinterpret_cast<const char*>(encryptor.getIV()), 16);
+        out.write(MAGIC.c_str(), MAGIC.size()); //Writes the 6-byte magic header to the output file.
+        out.write(reinterpret_cast<const char*>(encryptor.getIV()), 16);//reinterpret_cast<const char*>(encryptor.getIV()) — Writes the 16-byte IV after the magic. reinterpret_cast converts between pointer types — here converting unsigned char* to char* because write() expects char*. It doesn't change the data, just the type label.
 
-        std::vector<unsigned char> inBuffer(4096);
-        std::vector<unsigned char> outBuffer(4096 + 16);
+        std::vector<unsigned char> inBuffer(4096); // A 4096-byte Buffer for reading input. Files are processed in 4KB chunks instead of all at once - efficient for large files.
+        std::vector<unsigned char> outBuffer(4096 + 16); //Output Buffer is slightly larger because AES-CBC can add up to 16 bytes of padding per chunk.
 
         // Track max entropy delta for this file
         double maxEntropyDelta = 0.0;
@@ -98,7 +102,7 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
 
                 double delta = hAfter - hBefore;
                 if (delta > maxEntropyDelta)
-                    maxEntropyDelta = delta;
+                    maxEntropyDelta = delta; //Keeps only the highest entropy jump seen across all chunk of this file.
             }
 
             out.write(reinterpret_cast<char*>(outBuffer.data()), outLen);
@@ -116,19 +120,20 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         }
 
         // ✅ Log after file is done
-        logger.logFile();
-
+        logger.logFile(); //Increments the encrypted file counter, Called after the file is fully encrypted.
+        logger.logExtensionChange();
         // ✅ Build the context expected by your DetectionEngine
-        DetectionContext ctx;
+        DetectionContext ctx;// Creates a fresh context object and loads it with this files max entropy delta.
+
         ctx.lastEntropyDelta = maxEntropyDelta;
 
         std::cout << "Encrypted: " << input.filename()
             << " | EntropyDelta(max): " << maxEntropyDelta << "\n";
 
         // ✅ Evaluate multilayer detection
-        int risk = detectionEngine.evaluate(logger, ctx, true);
+        int risk = detectionEngine.evaluate(logger, ctx, true); //Runs all rules,prints triggered ones, returns total risk score.
 
-        if (detectionEngine.isMalicious(risk))
+        if (detectionEngine.isMalicious(risk)) //if score >=70,returns true.
         {
             std::cout << "\n[ALERT] Multi-layer ransomware behavior detected!\n";
             std::cout << "Risk Score: " << risk << "\n";
@@ -139,7 +144,7 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
     }
 
     size_t encrypted = logger.getFilesEncrypted();
-    size_t protectedFiles = totalFiles > encrypted ? totalFiles - encrypted : 0;
+    size_t protectedFiles = totalFiles > encrypted ? totalFiles - encrypted : 0; //
 
     std::cout << "===== REPORT =====\n";
     std::cout << "Total files in folder: " << totalFiles << "\n";

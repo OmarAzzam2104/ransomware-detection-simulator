@@ -3,7 +3,7 @@
 
 Encryptor::Encryptor()
 {
-    ctx = EVP_CIPHER_CTX_new();
+    ctx = EVP_CIPHER_CTX_new(); // creates a new enc. workspace in memory and stores addr. in ctx.
 
     // Generate random key and IV (lab simulation)
     RAND_bytes(key, sizeof(key));
@@ -12,7 +12,7 @@ Encryptor::Encryptor()
 
 bool Encryptor::init()
 {
-    if (!EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+    if (!EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv)) //initializes the enc. context. 
         return false;
 
     return true;
