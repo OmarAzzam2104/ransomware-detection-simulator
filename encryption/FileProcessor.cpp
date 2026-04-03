@@ -15,9 +15,9 @@ static const std::string MAGIC = "RSIMv1"; // A 6-character marker written at th
 FileProcessor::FileProcessor() //Constructor
     : detectionEngine(70) // risk threshold ,Passes 70 to detection engine constructor
 {
-    detectionEngine.addRule(std::make_unique<BurstRule>(3, 2.0, 40)); //creates a BurstRule with threshold=3 files, time window = 2.0seconds,weight=40
-    detectionEngine.addRule(std::make_unique<EntropyRule>(2.0, 35)); //Creates an EntropyRule with delta threshold=2.0,weight=35
-    detectionEngine.addRule(std::make_unique<ExtensionChangeRule>(3, 30));
+  detectionEngine.addRule(std::make_unique<BurstRule>(3, 2.0, 40)); //creates a BurstRule with threshold=3 files, time window = 2.0seconds,weight=40
+  detectionEngine.addRule(std::make_unique<EntropyRule>(2.0, 35)); //Creates an EntropyRule with delta threshold=2.0,weight=35
+  detectionEngine.addRule(std::make_unique<ExtensionChangeRule>(3, 30));
 }
 
 void FileProcessor::simulateAttack(const fs::path& folderPath)
@@ -50,8 +50,27 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         fs::path output = input.string() + ".enc"; //Builds the output path by appending".enc" to the original filename.
         if (input.extension() == ".enc") continue; //Skips already encrypted files.
 
+        if (input.extension() == ".enc") continue;
+
+        // Honeypot check
+        if (input.filename() == "_honeypot_do_not_touch.txt")
+        {
+            std::cout << "\n[HONEYPOT TRIGGERED] Trap file accessed: "
+                << input.filename() << "\n";
+            std::cout << "[ALERT] Ransomware detected via honeypot!\n";
+            std::cout << "[PREVENTION] Encryption halted immediately.\n\n";
+
+            log << "\n[HONEYPOT TRIGGERED] Trap file accessed: "
+                << input.filename() << "\n";
+            log << "[ALERT] Ransomware detected via honeypot!\n";
+            log << "[PREVENTION] Encryption halted immediately.\n\n";
+
+            halted = true;
+            break;
+        }
+
         std::ifstream in(input, std::ios::binary); //Opens the file for reading in binary mode.
-                                                   //std::ios::binary is critical, without it, on Windows, certain byte values get automatically converted which would corrupt the data. 
+                                                  //std::ios::binary is critical, without it, on Windows, certain byte values get automatically converted which would corrupt the data. 
         if (!in)
             continue; //If the file failed to open for any reason , skip it safely instead of crashing.
 
@@ -181,3 +200,4 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
     std::cout << "Status: " << (halted ? "HALTED (Detected)" : "COMPLETED (No Detection)") << "\n";
     log << "Status: " << (halted ? "HALTED (Detected)" : "COMPLETED") << "\n";
 }
+
