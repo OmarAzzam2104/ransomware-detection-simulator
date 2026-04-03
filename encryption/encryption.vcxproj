@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BurstRule.cpp" />
+    <ClCompile Include="Decryptor.cpp" />
     <ClCompile Include="DetectionEngine.cpp" />
     <ClCompile Include="Encryptor.cpp" />
     <ClCompile Include="Encryptor.h" />
@@ -139,6 +140,7 @@
     <ClCompile Include="EntropyRule.cpp" />
     <ClCompile Include="ExtensionChangeRule.cpp" />
     <ClCompile Include="FileProcessor.cpp" />
+    <ClCompile Include="KeyVault.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Logger.h" />
     <ClCompile Include="main.cpp" />
@@ -146,12 +148,14 @@
   <ItemGroup>
     <ClInclude Include="BehaviorRule.h" />
     <ClInclude Include="BurstRule.h" />
+    <ClInclude Include="Decryptor.h" />
     <ClInclude Include="DetectionContext.h" />
     <ClInclude Include="DetectionEngine.h" />
     <ClInclude Include="EntropyAnalyzer.h" />
     <ClInclude Include="EntropyRule.h" />
     <ClInclude Include="ExtensionChangeRule.h" />
     <ClInclude Include="FileProcessor.h" />
+    <ClInclude Include="KeyVault.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,4 +18,5 @@ public:
     const unsigned char* getIV() const;
     ~Encryptor(); //~ it means it runs automatically when the object is destroyed. it frees the Openssl context from memory
                     // without this you would have a memory leak.
+    const unsigned char* getKey() const;
 };

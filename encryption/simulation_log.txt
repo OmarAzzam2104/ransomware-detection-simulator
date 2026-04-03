@@ -1,12 +1,12 @@
 === RANSOMWARE SIMULATION LOG ===
-Run Time: 1775232685
+Run Time: 1775239347
 Target Folder: "C:\\RansomSimLab\\DemoFolder"
 =====================================
 
-Encrypted: "client_data.txt" | EntropyDelta(max): 1.13185
-Encrypted: "exam_answers.txt" | EntropyDelta(max): 2.14339
+Encrypted: "client_data.txt" | EntropyDelta(max): 1.16628
+Encrypted: "exam_answers.txt" | EntropyDelta(max): 2.12991
   [RULE TRIGGERED] Entropy Spike (+35)
-Encrypted: "images.png" | EntropyDelta(max): 0.0238854
+Encrypted: "images.png" | EntropyDelta(max): 0.0130676
   [RULE TRIGGERED] Burst Encryption Activity (+40)
   [RULE TRIGGERED] Mass Extension Change (+30)
 

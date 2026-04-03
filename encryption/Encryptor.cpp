@@ -39,6 +39,10 @@ const unsigned char* Encryptor::getIV() const
 {
     return iv;
 }
+const unsigned char* Encryptor::getKey() const
+{
+    return key;
+}
 
 Encryptor::~Encryptor()
 {

@@ -3,7 +3,7 @@
 #include "EntropyAnalyzer.h"
 #include "ExtensionChangeRule.h"
 #include <ctime>
-
+#include "Decryptor.h"
 #include <fstream>
 #include <vector>
 #include <iostream>
@@ -127,6 +127,7 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         }
 
         // ✅ Log after file is done
+        keyVault.storeKey(input.filename().string(), encryptor.getKey(), 32);
         logger.logFile(); //Increments the encrypted file counter, Called after the file is fully encrypted.
         logger.logExtensionChange();
         // ✅ Build the context expected by your DetectionEngine
@@ -157,6 +158,17 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
 
     size_t encrypted = logger.getFilesEncrypted();
     size_t protectedFiles = totalFiles > encrypted ? totalFiles - encrypted : 0; //
+
+
+    // Decrypt all .enc files using stored keys
+    std::cout << "\n===== DECRYPTION =====\n";
+    Decryptor decryptor(keyVault);
+    for (auto& entry : fs::directory_iterator(folderPath))
+    {
+        if (entry.path().extension() == ".enc")
+            decryptor.decryptFile(entry.path());
+    }
+
 
     std::cout << "===== REPORT =====\n";
     log << "===== REPORT =====\n";
