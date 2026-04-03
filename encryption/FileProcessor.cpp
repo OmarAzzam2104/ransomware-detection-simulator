@@ -2,6 +2,7 @@
 #include "Encryptor.h"
 #include "EntropyAnalyzer.h"
 #include "ExtensionChangeRule.h"
+#include <ctime>
 
 #include <fstream>
 #include <vector>
@@ -22,7 +23,13 @@ FileProcessor::FileProcessor() //Constructor
 void FileProcessor::simulateAttack(const fs::path& folderPath)
 {
     logger.start(); //Resets the counter to 0 and captures the start time.Must be called before the loop begins.
+    std::ofstream log("simulation_log.txt");
+    log << "=== RANSOMWARE SIMULATION LOG ===\n";
 
+    std::time_t now = std::time(nullptr);
+    log << "Run Time: " << now << "\n";
+    log << "Target Folder: " << folderPath << "\n";
+    log << "=====================================\n\n";
 
     // ✅ Count all files first
     size_t totalFiles = 0;
@@ -129,6 +136,8 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
 
         std::cout << "Encrypted: " << input.filename()
             << " | EntropyDelta(max): " << maxEntropyDelta << "\n";
+        log << "Encrypted: " << input.filename()
+            << " | EntropyDelta(max): " << maxEntropyDelta << "\n";
 
         // ✅ Evaluate multilayer detection
         int risk = detectionEngine.evaluate(logger, ctx, true); //Runs all rules,prints triggered ones, returns total risk score.
@@ -136,8 +145,11 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
         if (detectionEngine.isMalicious(risk)) //if score >=70,returns true.
         {
             std::cout << "\n[ALERT] Multi-layer ransomware behavior detected!\n";
+            log << "\n[ALERT] Multi-layer ransomware behavior detected!\n";
             std::cout << "Risk Score: " << risk << "\n";
+            log << "Risk Score: " << risk << "\n";
             std::cout << "[PREVENTION] Encryption halted immediately.\n\n";
+            log << "[PREVENTION] Encryption halted immediately. \n\n";
             halted = true;
             break;
         }
@@ -147,8 +159,13 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
     size_t protectedFiles = totalFiles > encrypted ? totalFiles - encrypted : 0; //
 
     std::cout << "===== REPORT =====\n";
+    log << "===== REPORT =====\n";
     std::cout << "Total files in folder: " << totalFiles << "\n";
+    log << "Total files: " << totalFiles << "\n";
     std::cout << "Files encrypted before detection: " << encrypted << "\n";
+    log << "Files encrypted: " << encrypted << "\n";
     std::cout << "Files protected from attack: " << protectedFiles << "\n";
+    log << "Files protected: " << protectedFiles << "\n";
     std::cout << "Status: " << (halted ? "HALTED (Detected)" : "COMPLETED (No Detection)") << "\n";
+    log << "Status: " << (halted ? "HALTED (Detected)" : "COMPLETED") << "\n";
 }
