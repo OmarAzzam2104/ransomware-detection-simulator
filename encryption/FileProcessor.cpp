@@ -140,7 +140,7 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
             << " | EntropyDelta(max): " << maxEntropyDelta << "\n";
 
         // ✅ Evaluate multilayer detection
-        int risk = detectionEngine.evaluate(logger, ctx, true); //Runs all rules,prints triggered ones, returns total risk score.
+        int risk = detectionEngine.evaluate(logger, ctx, true, &log); //Runs all rules,prints triggered ones, returns total risk score.
 
         if (detectionEngine.isMalicious(risk)) //if score >=70,returns true.
         {
