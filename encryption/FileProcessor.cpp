@@ -23,7 +23,7 @@ FileProcessor::FileProcessor() //Constructor
 void FileProcessor::simulateAttack(const fs::path& folderPath)
 {
     logger.start(); //Resets the counter to 0 and captures the start time.Must be called before the loop begins.
-    std::ofstream log("simulation_log.txt");
+    std::ofstream log("C:\\RansomSimLab\\simulation_log.txt", std::ios::app);
     log << "=== RANSOMWARE SIMULATION LOG ===\n";
 
     std::time_t now = std::time(nullptr);
