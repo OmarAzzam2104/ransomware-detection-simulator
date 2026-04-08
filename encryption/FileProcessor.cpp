@@ -7,6 +7,8 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 namespace fs = std::filesystem;
 
@@ -68,11 +70,14 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
             halted = true;
             break;
         }
+       
 
         std::ifstream in(input, std::ios::binary); //Opens the file for reading in binary mode.
                                                   //std::ios::binary is critical, without it, on Windows, certain byte values get automatically converted which would corrupt the data. 
         if (!in)
             continue; //If the file failed to open for any reason , skip it safely instead of crashing.
+
+       
 
         std::ofstream out(output, std::ios::binary); //Opens the output .enc file for writing in binary mode.
         if (!out)
@@ -173,6 +178,8 @@ void FileProcessor::simulateAttack(const fs::path& folderPath)
             halted = true;
             break;
         }
+    
+       
     }
 
     size_t encrypted = logger.getFilesEncrypted();

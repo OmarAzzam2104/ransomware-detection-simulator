@@ -5,6 +5,8 @@
 
 int main(int argc, char* argv[])
 {
+    std::cout.setf(std::ios::unitbuf);
+
     std::cout << "==== Ransomware Behavior Detection Prototype ====\n";
     std::cout << "WARNING: Only run this inside a designated lab folder!\n\n";
 
